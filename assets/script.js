@@ -38,11 +38,30 @@ function createTaskCard(task) {
 function renderTaskList() {
     $('#todo').empty();
     $('#in-progress').empty();
+    $('#done').empty();
+
+
+
     
 }
 
 // Todo: create a function to handle adding a new task
 function handleAddTask(event) {
+    event.preventDefault();
+    const title = $('#task-title').val();
+    const dueDate = $('#task-due-date').val();
+    const description = $('#task-description').val();
+    
+if (!title || !dueDate || !description) {
+    alert("Please fill out all fields!");
+} else {
+    const newTask = {
+        id: generateTaskId(), title, dueDate, description, deadline, status: 'todo'
+    };
+    
+}
+
+
 
 }
 
