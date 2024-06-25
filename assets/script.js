@@ -1,52 +1,65 @@
 // Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
-let nextId = JSON.parse(localStorage.getItem("nextId"));
+let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
+    localStorage.setItem("nextId", nextId + 1);
     return nextId++;
 }
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
-    const deadline = dayjs(task.deadline); 
+    const deadline = dayjs(task.dueDate); 
     const today = dayjs();
     let cardColor = '';
 
     if (task.status === 'done') {
         cardColor = "text-bg-light";
-    }
-    else if (today.isSame(deadline, 'day')) {
+    } else if (today.isSame(deadline, 'day')) {
         cardColor = "text-bg-danger";
-    }
-    else (today.isBefore(deadline, 'day')) {
-        cardColor = "text-bg-warning"; 
+    } else if (today.isBefore(deadline, 'day')) {
+        cardColor = "text-bg-warning";
+    } else {
+        cardColor = "text-bg-danger";
     }
     
     return `
     <div class="card ${cardColor} mb-3" style="max-width: 18rem;" data-id="${task.id}">
         <div class="card-body">
             <h5 class="card-title">${task.title}</h5>
-            <p class="card-text">Due: ${task.dueDate}/p>
+            <p class="card-text">Due: ${task.dueDate}</p>
             <a href="#" class="btn btn-danger delete-task">Delete</a>
         </div>
     </div>`;
-
 }
+
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
-    $('#todo').empty();
-    $('#in-progress').empty();
-    $('#done').empty();
+    $('#todo-cards').empty();
+    $('#in-progress-cards').empty();
+    $('#done-cards').empty();
 
-    taskList.foreach(task => {
+    taskList.forEach(task => {
         const card = createTaskCard(task);
         $(`#${task.status}-cards`).append(card);
-    }); 
-        $('#delete-task').on('click', handleDeleteTask);
-        $( '.card' ).draggable();
-      
+    });
+
+    $('.delete-task').on('click', handleDeleteTask);
+    $('.card').draggable({
+        revert: "invalid",
+        helper: "clone",
+        start: function(event, ui) {
+            $(ui.helper).css('z-index', 100);
+        }
+    });
+
+    $('.lane').droppable({
+        accept: '.card',
+        drop: handleDrop,
+        hoverClass: "ui-state-hover",
+    });
 }
 
 // Todo: create a function to handle adding a new task
@@ -56,51 +69,48 @@ function handleAddTask(event) {
     const dueDate = $('#task-due-date').val();
     const description = $('#task-description').val();
     
-if (!title || !dueDate || !description) {
-    alert("Please fill out all fields!");
-} else {
+    if (!title || !dueDate || !description) {
+        alert("Please fill out all fields!");
+        return;
+    }
+
     const newTask = {
-        id: generateTaskId(), title, dueDate, description, deadline, status: 'todo'
+        id: generateTaskId(),
+        title,
+        dueDate,
+        description,
+        status: 'todo'
     };
+
     taskList.push(newTask);
     localStorage.setItem("tasks", JSON.stringify(taskList));
-    
     renderTaskList();
-    $('#form-modal').modal('hide'); 
+    $('#formModal').modal('hide'); 
+};
 
-    
-}
-
-
-
-}
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
     const taskId = $(event.target).closest(".card").data("id");
     taskList = taskList.filter(task => task.id !== taskId);
-    localStorage("tasks", JSON.stringify(taskList));
-
+    localStorage.setItem("tasks", JSON.stringify(taskList));
     renderTaskList();
-}
+};
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
     const taskId = ui.draggable.data('id');
     const newStatus = $(this).attr('id').split('-')[0];
 
-    taskList = taskList.map(task =>{
+    taskList = taskList.map(task => {
         if (task.id === taskId) {
             task.status = newStatus;
         }
         return task;
-
-    })
+    });
 
     localStorage.setItem('tasks', JSON.stringify(taskList));
     renderTaskList();
-
-
 };
 
 
@@ -112,8 +122,6 @@ $(document).ready(function () {
     $('#task-due-date').datepicker({
         dateFormat: 'yy-mm-dd'
     });
-
-
-}); 
+});
 
 
