@@ -40,9 +40,13 @@ function renderTaskList() {
     $('#in-progress').empty();
     $('#done').empty();
 
-
-
-    
+    taskList.foreach(task => {
+        const card = createTaskCard(task);
+        $(`#${task.status}-cards`).append(card);
+    }); 
+        $('#delete-task').on('click', handleDeleteTask);
+        $( '.card' ).draggable();
+      
 }
 
 // Todo: create a function to handle adding a new task
@@ -75,15 +79,39 @@ function handleDeleteTask(event) {
     const taskId = $(event.target).closest(".card").data("id");
     taskList = taskList.filter(task => task.id !== taskId);
     localStorage("tasks", JSON.stringify(taskList));
-    
+
+    renderTaskList();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
+        $( "#draggable" ).draggable();
+        $( "#droppable" ).droppable({
+          drop: function( event, ui ) {
+            $( this )
+              .addClass( "ui-state-highlight" )
+              .find( "p" )
+                .html( "Dropped!" );
+          }
+        });
 
-}
+};
+
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
+    renderTaskList();
+
+    $( function() {
+        $( "#draggable" ).draggable();
+        $( "#droppable" ).droppable({
+          drop: function( event, ui ) {
+            $( this )
+              .addClass( "ui-state-highlight" )
+              .find( "p" )
+                .html( "Dropped!" );
+          }
+        });
+      } );
 
 });
