@@ -10,7 +10,7 @@ function generateTaskId() {
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
-    const deadline = dayjs(task.dueDate); 
+    const deadline = dayjs(task.dueDate);
     const today = dayjs();
     let cardColor = '';
 
@@ -21,9 +21,9 @@ function createTaskCard(task) {
     } else if (today.isBefore(deadline, 'day')) {
         cardColor = "text-bg-warning";
     } else {
-        cardColor = "text-bg-danger";
+        cardColor = "text-bg-danger"; // Default to danger if past due date
     }
-    
+
     return `
     <div class="card ${cardColor} mb-3" style="max-width: 18rem;" data-id="${task.id}">
         <div class="card-body">
@@ -58,9 +58,10 @@ function renderTaskList() {
     $('.lane').droppable({
         accept: '.card',
         drop: handleDrop,
-        hoverClass: "ui-state-hover",
+        hoverClass: "ui-state-hover"
     });
 }
+
 
 // Todo: create a function to handle adding a new task
 function handleAddTask(event) {
@@ -68,7 +69,7 @@ function handleAddTask(event) {
     const title = $('#task-title').val();
     const dueDate = $('#task-due-date').val();
     const description = $('#task-description').val();
-    
+
     if (!title || !dueDate || !description) {
         alert("Please fill out all fields!");
         return;
@@ -85,8 +86,9 @@ function handleAddTask(event) {
     taskList.push(newTask);
     localStorage.setItem("tasks", JSON.stringify(taskList));
     renderTaskList();
-    $('#formModal').modal('hide'); 
-};
+    $('#formModal').modal('hide');
+}
+
 
 
 // Todo: create a function to handle deleting a task
@@ -95,7 +97,7 @@ function handleDeleteTask(event) {
     taskList = taskList.filter(task => task.id !== taskId);
     localStorage.setItem("tasks", JSON.stringify(taskList));
     renderTaskList();
-};
+}
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
@@ -111,8 +113,7 @@ function handleDrop(event, ui) {
 
     localStorage.setItem('tasks', JSON.stringify(taskList));
     renderTaskList();
-};
-
+}
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
