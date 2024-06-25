@@ -16,10 +16,13 @@ Task Board is a simple Kanban board for task management. It allows users to add,
 - CSS (Bootstrap)
 - Javascript (jQuery, Day.JS)
 
-## Usage
+## Usage: 
 
 1. Add Task: Click "Add Task", fill in the details, and submit.
 2. Delete Task: Click the "Delete" button on the task card. 
 3. Move Task: Drag and drop a task card to update its status. 
+
+## Page Link: 
+https://lukemaines.github.io/task-board/
 
 
