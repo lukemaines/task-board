@@ -1,5 +1,5 @@
 // Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("task"));
+let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
 // Todo: create a function to generate a unique task id
@@ -59,7 +59,7 @@ if (!title || !dueDate || !description) {
         id: generateTaskId(), title, dueDate, description, deadline, status: 'todo'
     };
     taskList.push(newTask);
-    localStorage.setItem("task", JSON.stringify(taskList));
+    localStorage.setItem("tasks", JSON.stringify(taskList));
     
     renderTaskList();
 
@@ -72,7 +72,10 @@ if (!title || !dueDate || !description) {
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
-
+    const taskId = $(event.target).closest(".card").data("id");
+    taskList = taskList.filter(task => task.id !== taskId);
+    localStorage("tasks", JSON.stringify(taskList));
+    
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
